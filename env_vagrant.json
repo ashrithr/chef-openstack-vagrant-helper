@@ -1,0 +1,70 @@
+{
+  "name": "vagrant",
+  "description": "vagrant for openstack environment",
+  // lockdown cookbook versions
+  "cookbook_versions": {
+  },
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "default_attributes": {
+  },
+  // override all req attributes
+  "override_attributes": {
+    // enabling developer_mode will output more info to logging and console
+    "developer_mode": false,
+    // monitoring stuff
+    "monitoring" : {
+      "metric_provider" : "collectd",
+      "procmon_provider" : "monit"
+    },
+    // upload cirros and precise images to glance
+    "glance": {
+      "image_upload": true,
+      "images": ["cirros", "precise"]
+    },
+    // nova-specific
+    "nova": {
+      "ratelimit" : {
+        "api" : { "enabled" : true },
+        "volume" : { "enabled" : true }
+      },
+      // using virtualization as qemu, look for kvm & others
+      "libvirt": { "virt_type": "qemu" },
+      // configure networks for vms created by openstack
+      "networks": [
+        {
+            "label": "public",
+            "ipv4_cidr": "10.10.100.0/24",
+            "num_networks": "1",
+            "network_size": "255",
+            "bridge": "br100",
+            "bridge_dev": "eth2",
+            "dns1": "8.8.8.8",
+            "dns2": "8.8.4.4"
+        },
+        {
+            "label": "private",
+            "ipv4_cidr": "172.16.101.0/24",
+            "num_networks": "1",
+            "network_size": "255",
+            "bridge": "br101",
+            "bridge_dev": "eth3",
+            "dns1": "8.8.8.8",
+            "dns2": "8.8.4.4"
+        }
+      ]
+    },
+    "mysql": {
+      "allow_remote_root": true,
+      "root_network_acl": "%"
+    },
+    // services networks
+    "osops_networks": {
+      "nova": "33.33.33.0/24",
+      "public": "33.33.33.0/24",
+      "management": "33.33.33.0/24"
+    },
+    // use folsom packages
+    "package_component": "folsom"
+  }
+}

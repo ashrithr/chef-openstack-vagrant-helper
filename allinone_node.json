@@ -1,0 +1,13 @@
+{
+  // node to install everything onto it
+  "name": "allinone.local",
+  "chef_environment": "vagrant",
+  "normal": {
+    "tags": [
+
+    ]
+  },
+  "run_list": [
+    "role[allinone]"
+  ]
+}

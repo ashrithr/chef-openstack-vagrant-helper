@@ -1,0 +1,65 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.define :chef do |chef_config|
+    chef_config.vm.box = "precise64"
+    chef_config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-12.04.box"
+    chef_config.vm.hostname = "chefserver.local"
+    chef_config.vm.network :private_network, ip: "33.33.33.50"
+    chef_config.ssh.timeout = 120
+    chef_config.ssh.forward_agent = true
+    chef_config.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "1024"]
+    end
+    chef_config.vm.provision :shell, :path => "chef_server_installer.sh"
+  end
+
+
+  config.vm.define :allinone do |chef_config|
+    chef_config.vm.box = "precise64"
+    chef_config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-12.04.box"
+    chef_config.vm.hostname = "allinone.local"
+    chef_config.vm.network :private_network, ip: "33.33.33.60"
+    chef_config.vm.network :private_network, ip: "10.10.100.60"
+    chef_config.vm.network :private_network, ip: "172.16.101.60"
+    chef_config.ssh.timeout = 120
+    chef_config.ssh.forward_agent = true
+    chef_config.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "1024", "--cpus", 2, "--nicpromisc3", "allow-all", "--nicpromisc4", "allow-all"]
+    end
+    chef_config.vm.provision :shell, :path => "chef_client_installer.sh"
+    #put the interface eth2 in promiscuous mode
+    chef_config.vm.provision :shell, :inline => "ifconfig eth2 promisc"
+  end
+
+
+  config.vm.define :single_controller do |chef_config|
+    chef_config.vm.box = "precise64"
+    chef_config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-12.04.box"
+    chef_config.vm.hostname = "single_controller"
+    chef_config.vm.network :private_network, ip: "33.33.33.60"
+    chef_config.ssh.timeout = 120
+    chef_config.ssh.forward_agent = true
+    chef_config.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "512"]
+    end
+    chef_config.vm.provision :shell, :path => "chef_client_installer.sh"
+  end
+
+  config.vm.define :single_compute do |chef_config|
+    chef_config.vm.box = "precise64"
+    chef_config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-12.04.box"
+    chef_config.vm.hostname = "single_compute"
+    chef_config.vm.network :private_network, ip: "33.33.33.61"
+    chef_config.vm.network :private_network, ip: "10.10.100.61"
+    chef_config.vm.network :private_network, ip: "172.16.101.61"
+    chef_config.ssh.timeout = 120
+    chef_config.ssh.forward_agent = true
+    chef_config.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "1024", "--cpus", 2, "--nicpromisc3", "allow-all", "--nicpromisc4", "allow-all"]
+    end
+    chef_config.vm.provision :shell, :path => "chef_client_installer.sh"
+    #put the interface eth2 in promiscuous mode
+    chef_config.vm.provision :shell, :inline => "sudo ifconfig eth2 promisc"
+  end
+
+end
