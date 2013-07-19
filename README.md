@@ -7,7 +7,7 @@ Req: Install [Vagrant](http://www.vagrantup.com/)
 Download
 
   ```
-  git clone --recursive
+  git clone --recursive https://github.com/ashrithr/chef-openstack-vagrant-helper.git
   ```
 Install Chef server
 
